@@ -1,0 +1,73 @@
+const mongoose = require('mongoose');
+
+const UserEngagementSchema = new mongoose.Schema(
+    {
+        user:{
+            type:mongoose.Schema.ObjectId,
+            ref:"User",
+            required:true
+        },
+        followers:[
+            {
+                userId:{
+                    type:mongoose.Schema.ObjectId,
+                    ref:"User",
+                }
+            }
+        ],
+        following:[
+            {
+                userId:{
+                    type:mongoose.Schema.ObjectId,
+                    ref:"User",
+                },
+            }
+        ],
+        bookMarkedPosts:[
+            {
+                postId:{
+                    type:mongoose.Schema.ObjectId,
+                    ref:"Post"
+                }
+            }
+        ],
+        mutedUsers:[
+            {
+                userId:{
+                    type:mongoose.Schema.ObjectId,
+                    ref:"User",
+                }
+            }
+        ],
+        blockedUsers:[
+            {
+                userId:{
+                    type:mongoose.Schema.ObjectId,
+                    ref:"User",
+                }
+            }
+        ],
+        hiddenPosts:[
+            {
+                postId:{
+                    type:mongoose.Schema.ObjectId,
+                    ref:"User",
+                }
+            }
+        ],
+        shoutoutStatus:{
+            type:Boolean,
+            default:true
+        },
+        shoutoutPrice:{
+            type:Number,
+            default:20
+        },
+        shoutoutDeliveryDays:{
+            type:Number,
+            default:4
+        },
+    }
+)
+
+module.exports = mongoose.model('UserEngagement', UserEngagementSchema);
