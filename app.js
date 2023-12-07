@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const errorMiddleware = require('./middleware/error');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const cors = require('cors')
 
 
 const userRoute = require('./routes/userRoutes');
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(cookieParser())
 app.use(express.json());
+app.use(cors())
 // help to read form data
 app.use(express.urlencoded({extended:false}));
 dotenv.config({path: "./config/config.env"});
@@ -44,9 +46,9 @@ app.use('/api/reply', replyRoutes);
 // error middleware
 app.use(errorMiddleware);
 
-//'192.168.0.127' ||
+//'192.168.0.127' || 
 
 app.listen(process.env.PORT, 'localhost',
     ()=>{
-    console.log("Backend server is running");
+    console.log("Backend server is running")
 });
