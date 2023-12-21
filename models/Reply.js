@@ -21,7 +21,11 @@ const ReplySchema = new mongoose.Schema(
                     ref:'User'
                 }
             }
-        ]
+        ],
+        replyLiked:{
+            type:Boolean,
+            default:false,
+        }
 
     },
     {

@@ -22,7 +22,7 @@ app.use(cors())
 // help to read form data
 app.use(express.urlencoded({extended:false}));
 dotenv.config({path: "./config/config.env"});
-app.use('/public/uploads', express.static('uploads'))
+app.use('/public/', express.static('public'))
 
 
 app.use(require('express-session')({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));

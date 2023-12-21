@@ -22,9 +22,9 @@ router.post('/login', login)
 
 router.post('/forgotpassword', resendOtp);
 
-router.put('/password/reset/:token', resetPassword);
+router.put('/password/reset', resetPassword);
 
-router.put('/edit/profile/:id', isAuthenticatedUser, editProfile)
+router.put('/edit/profile/:id', isAuthenticatedUser, editProfile);
 
 router.get('/search',isAuthenticatedUser, searchUsers);
 

@@ -306,7 +306,8 @@ exports.suggestUser = async(req, res, next)=>{
             const mutualFollowersCount = userEngagement.followers.filter((follower) => followers.includes(follower._id.toString())).length
             return {
                 user: userEngagement.user,
-                mutualFollowersCount: mutualFollowersCount
+                mutualFollowersCount: mutualFollowersCount,
+                followers:userEngagement.followers.length
             }
         })
 

@@ -1,4 +1,4 @@
-const { createPost, getAllPosts, editPost, deletePost, likePost, unLikePost, sharePost, getAllUserPosts, getPost, uploadPostImage } = require('../controllers/post');
+const { createPost, getAllPosts, editPost, deletePost, likePost, unLikePost, sharePost, getAllUserPosts, getPost, uploadPostImage, getAllLikes } = require('../controllers/post');
 
 const { isAuthenticatedUser } = require('../middleware/auth');
 
@@ -19,6 +19,8 @@ router.post('/media/upload', isAuthenticatedUser, upload.single('media'), upload
 router.put('/like/:id', isAuthenticatedUser, likePost)
 
 router.put('/unlike/:id', isAuthenticatedUser, unLikePost)
+
+router.get('/likes/all/:postId', isAuthenticatedUser, getAllLikes)
 
 router.post('/share/:id', isAuthenticatedUser, sharePost)
 

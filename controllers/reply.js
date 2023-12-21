@@ -145,9 +145,11 @@ exports.getAllReplies = async(req, res, next)=>{
             return next(new ErrorHandler(`Replies not found`, 401));
         }
 
-        // replies.forEach((rep)=>{
-
-        // })
+        replies.forEach((rep)=>{
+            const alreadyLiked = rep.likes.filter(l => l._id.toString() === req.user._id.toString());
+            alreadyLiked.length>0 ? rep.replyLiked=true : rep.replyLiked=false
+        })
+        
         return new ResponseHandler(res, 200, true, '', {
             noOfReplies:replies.length,
             replies

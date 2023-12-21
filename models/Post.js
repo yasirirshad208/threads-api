@@ -5,16 +5,12 @@ const PostSchema = new mongoose.Schema(
         text:{
             type: String,
         },
-        media:[
-            {
-                url:{
-                    type:String
-                }
-            }
-        ],
+        media:{
+            type:String
+        },
         likes:[
             {
-                userId:{
+                _id:{
                     type:mongoose.Schema.ObjectId,
                     ref:"User"
                 },
@@ -40,6 +36,14 @@ const PostSchema = new mongoose.Schema(
             type:mongoose.Schema.ObjectId,
             ref:'ShoutoutRequest'
         },
+        postBookmarked:{
+            type:Boolean,
+            default:false
+        },
+        postLiked:{
+            type:Boolean,
+            default:false
+        }
     },
     {
         timestamps:true

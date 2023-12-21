@@ -74,7 +74,7 @@ exports.getAllPosts = async(req,res,next)=>{
 
             const postBookmarked = userEngagement.bookMarkedPosts.find(b => b._id.toString() === post._id.toString())
 
-            let currPost = post                
+            let currPost = post  
 
             postBookmarked ? currPost.postBookmarked = true : currPost.postBookmarked = false
 
@@ -180,10 +180,14 @@ exports.sharePost = async(req, res, next)=>{
 exports.getPost = async(req, res, next)=>{
     try {
         const {id} = req.params
-        const post = await Post.findOne({_id:id}).populate(['shoutoutRequestId', 'sharedPostId'])
+        const post = await Post.findOne({_id:id}).populate(['shoutoutRequestId', 'sharedPostId', 'createdBy'])
         if(!post){
             return next(new ErrorHandler(`Post not found`, 404));
         }
+
+        const likedPost = post.likes.find(l => l._id.toString() === req.user._id.toString());
+
+        likedPost ? post.postLiked = true : ''
 
         return new ResponseHandler(res, 200, true, '', post)
     } catch (error) {
@@ -251,6 +255,33 @@ exports.unLikePost = async(req, res, next)=>{
         return new ResponseHandler(res, 201, true, 'UnLiked successfully', {
             noOfLikes
         })
+    } catch (error) {
+        return next(new ErrorHandler(error, 500))
+    }
+}
+//get all likes of a post
+exports.getAllLikes=async(req, res, next)=>{
+    try {
+        const {postId} = req.params
+        const post = await Post.findOne({_id:postId}, {likes:1}).populate({
+            path: 'likes._id', 
+        })
+
+        const userEngagement = await UserEngagement.findOne({user:req.user._id}, {following:1})
+
+        const postLikes = post.likes.map((like)=>({
+            _id:like._id._id,
+            name:like._id.name,
+            username:like._id.username,
+            avatar:like._id.avatar,
+            currUserFollowed: userEngagement
+            ? userEngagement.following.some(
+                (follow) => follow._id.toString() === like._id._id.toString()
+              )
+            : false,
+        }))
+        
+        return new ResponseHandler(res, 200, true, '', postLikes)
     } catch (error) {
         return next(new ErrorHandler(error, 500))
     }
