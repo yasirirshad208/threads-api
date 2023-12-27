@@ -297,7 +297,7 @@ exports.suggestUser = async(req, res, next)=>{
 
         let followers=[]
         userEngagements.followers.forEach((f)=>{
-            followers.push(f._id.toString)
+            followers.push(f._id.toString())
         })
 
         const users = await UserEngagement.find({followers:{$in:followers}}, {user:1, followers:1}).populate('user')
@@ -305,9 +305,16 @@ exports.suggestUser = async(req, res, next)=>{
         const usersWithMutualFollowers = users.map((userEngagement) => {
             const mutualFollowersCount = userEngagement.followers.filter((follower) => followers.includes(follower._id.toString())).length
             return {
-                user: userEngagement.user,
+                name: userEngagement.user.name,
+                username: userEngagement.user.username,
+                avatar: userEngagement.user.avatar,
                 mutualFollowersCount: mutualFollowersCount,
-                followers:userEngagement.followers.length
+                followers:userEngagement.followers.length,
+                currUserFollowed:userEngagement
+                ? userEngagement.followers.some(
+                    (follow) => follow._id.toString() === req.user._id.toString()
+                  )
+                : false
             }
         })
 
@@ -321,21 +328,38 @@ exports.suggestUser = async(req, res, next)=>{
 // search users
 exports.searchUsers = async(req, res, next)=>{
     try {
-        const userEngagement = await UserEngagement.findOne({user:req.user._id}, {blockedUsers:1}) 
-
-        console.log(userEngagement)
+        // const userEngagement = await UserEngagement.findOne({user:req.user._id}, {blockedUsers:1, following:1}) 
         
-        let allBlockedUsers = []
+        // let allBlockedUsers = [req.user._id.toString()]
 
-        userEngagement.blockedUsers.forEach((u)=>{
-            allBlockedUsers.push(u._id.toString())
-        })
+        // userEngagement.blockedUsers.forEach((u)=>{
+        //     allBlockedUsers.push(u._id.toString())
+        // })
+        // {_id:{$nin:{allBlockedUsers}}}
 
-        const apiFeature = new ApiFeatures(User.find({_id:{$nin:{allBlockedUsers}}}) ,req.query).search().pagination(10);
+        const apiFeature = new ApiFeatures(User.find(), req.query).search().pagination(10);
 
         const users = await apiFeature.query;
 
-        return new ResponseHandler(res, 200, true, '', users)
+        console.log(users)
+
+        const userEngagement = await UserEngagement.findOne({user:req.user._id}, {followers:1, following:1})
+
+        const allUsers = users.map((curr)=>{
+            return{
+                _id:curr._id,
+                name:curr.name,
+                username:curr.username,
+                avatar:curr.avatar,
+                currUserFollowed:userEngagement
+                ? userEngagement.following.some(
+                    (follow) => follow._id.toString() === curr._id.toString()
+                  )
+                : false
+            }
+        })
+
+        return new ResponseHandler(res, 200, true, '', allUsers)
 
     } catch (error) {
         return next(new ErrorHandler(error, 500))

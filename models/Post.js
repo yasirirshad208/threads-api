@@ -26,7 +26,8 @@ const PostSchema = new mongoose.Schema(
         },
         sharedPostId:{
             type:mongoose.Schema.ObjectId,
-            ref:'Post'
+            ref:'Post',
+            default:null
         },
         postType:{
             type:String,

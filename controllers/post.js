@@ -28,16 +28,20 @@ exports.createPost = async(req, res, next)=>{
 
 //upload post images
 exports.uploadPostImage = async (req, res, next)=>{
-    let mediaUrl;
-    if(req.file){
-        mediaUrl=req.file.path
-    }else{
-        return next(new ErrorHandler("Image not uploaded", 500));
-    }
+    try{
+        let mediaUrl;
+        if(req.file){
+            mediaUrl=req.file.path
+        }else{
+            return next(new ErrorHandler("Image not uploaded", 500));
+        }
 
-    return new ResponseHandler(res, 201, true, 'Media uploaded', {
-        url:mediaUrl
-    })
+        return new ResponseHandler(res, 201, true, 'Media uploaded', {
+            media:mediaUrl
+        })
+    }catch (error) {
+        return next(new ErrorHandler(error, 500));
+    }
 }
 
 // get All posts
@@ -150,7 +154,7 @@ exports.sharePost = async(req, res, next)=>{
     try {
         const {id} = req.params;
         
-        const post = await Post.findById(id);
+        const post = await Post.findOne({$or:[{_id:id}, {sharedPostId:id}]});
 
         if(!post){
             return next(new ErrorHandler("Post not found", 401))

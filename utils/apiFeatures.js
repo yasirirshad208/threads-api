@@ -10,7 +10,7 @@ class ApiFeatures{
             $or: [
                 {
                     name:{
-                        $regex: this.queryStr.keyword,
+                        $regex: this.queryStr.keyword, 
                         $options: 'i'
                     }
                 },
