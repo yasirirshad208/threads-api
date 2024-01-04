@@ -3,6 +3,6 @@ const { isAuthenticatedUser } = require('../middleware/auth');
 
 const router  = require('express').Router();
 
-router.get('/get/all/:id', isAuthenticatedUser, getAllActivities)
+router.get('/get/all', isAuthenticatedUser, getAllActivities)
 
 module.exports = router

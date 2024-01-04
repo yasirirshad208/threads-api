@@ -28,7 +28,7 @@ router.put('/edit/profile/:id', isAuthenticatedUser, editProfile);
 
 router.get('/search',isAuthenticatedUser, searchUsers);
 
-router.get('/get/single/:id',isAuthenticatedUser, getSingleUser);
+router.get('/get/single/:id?',isAuthenticatedUser, getSingleUser);
 
 router.get('/suggest',isAuthenticatedUser, suggestUser);
 

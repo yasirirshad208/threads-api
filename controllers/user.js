@@ -121,7 +121,9 @@ exports.updateAvatar = async(req, res, next)=>{
             return next(new ErrorHandler("Avatar not updated", 400));
          }
 
-         return new ResponseHandler(res, 200, true, 'Avatar updated successfully')
+         return new ResponseHandler(res, 200, true, 'Avatar updated successfully', {
+            avatar:req.file.path
+         })
 
     } catch (error) {
         return next(new ErrorHandler(error, 500));
@@ -341,7 +343,6 @@ exports.searchUsers = async(req, res, next)=>{
 
         const users = await apiFeature.query;
 
-        console.log(users)
 
         const userEngagement = await UserEngagement.findOne({user:req.user._id}, {followers:1, following:1})
 
@@ -368,11 +369,19 @@ exports.searchUsers = async(req, res, next)=>{
 
 // get single user
 exports.getSingleUser = async(req, res, next)=>{
-    const {id} = req.params
+    
     try {
-        const user = await User.findById(id);
+        let id=''
 
-        const userEngagement = await UserEngagement.findOne({user:id}, {followers:1, shoutoutStatus:1})
+        id = req.params.id
+
+        if(id === undefined){
+            id=req.user._id
+        }
+
+        // const user = await User.findById(id);
+
+        const userEngagement = await UserEngagement.findOne({user:id}, {followers:1, shoutoutStatus:1, user:1}).populate('user')
         
         const follow = userEngagement.followers.find(f => f._id.toString() === req.user._id.toString())
 
@@ -383,10 +392,10 @@ exports.getSingleUser = async(req, res, next)=>{
         }
 
         return new ResponseHandler(res, 200, true, '', {
-            noOfFollowes: userEngagement.followers.length,
+            // noOfFollowers: userEngagement.followers.length,
             followed,
-            shoutoutStatus:userEngagement.shoutoutStatus,
-            user,
+            // shoutoutStatus:userEngagement.shoutoutStatus,
+            user:userEngagement,
         })
 
     } catch (error) {

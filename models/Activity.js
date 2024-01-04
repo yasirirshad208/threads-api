@@ -25,4 +25,13 @@ const ActivitySchema = new mongoose.Schema(
     }
 )
 
+// ActivitySchema.pre('findOne', function (next) {
+//     this.populate({
+//         path: 'activities.userId',
+//         options: { sort: { 'activityTime': -1 } } // Sort in descending order based on activityTime
+//     });
+//     next();
+// });
+
+
 module.exports = mongoose.model('Activity', ActivitySchema)
